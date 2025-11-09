@@ -64,198 +64,124 @@ Create routing structure with react-router-dom:
 <li>Add styling using CSS or Tailwind.</li>
 
 ## PROGRAM
-
-app.js
+## bmicalclater.jsx:
 ```
+import React, { useState } from 'react';
 
-import React, { useState } from "react";
-import "./App.css";
-
-function App() {
-  const [weight, setWeight] = useState("");
-  const [height, setHeight] = useState("");
+const BMICalculator = () => {
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
   const [bmi, setBmi] = useState(null);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState('');
 
   const calculateBMI = () => {
-    if (weight && height) {
-      const heightInMeters = height / 100;
-      const bmiValue = (weight / (heightInMeters * heightInMeters)).toFixed(2);
-      setBmi(bmiValue);
+    if (!weight || !height) return;
+    const h = height / 100;
+    const result = (weight / (h * h)).toFixed(2);
+    setBmi(result);
 
-      if (bmiValue < 18.5) setCategory("Underweight");
-      else if (bmiValue < 25) setCategory("Normal weight");
-      else if (bmiValue < 30) setCategory("Overweight");
-      else setCategory("Obesity");
-    }
-  };
-
-  const reset = () => {
-    setWeight("");
-    setHeight("");
-    setBmi(null);
-    setCategory("");
+    if (result < 18.5) setCategory('Underweight');
+    else if (result < 24.9) setCategory('Normal weight');
+    else if (result < 29.9) setCategory('Overweight');
+    else setCategory('Obesity');
   };
 
   return (
-    <div className="container">
-      <h1>BMI Calculator</h1>
-      <div className="card">
-        <div className="input-group">
-          <label>Weight (kg):</label>
-          <input
-            type="number"
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
-          />
+    <div className="page">
+      <h2>BMI Calculator</h2>
+      <input
+        type="number"
+        placeholder="Weight (kg)"
+        value={weight}
+        onChange={(e) => setWeight(e.target.value)}
+      />
+      <input
+        type="number"
+        placeholder="Height (cm)"
+        value={height}
+        onChange={(e) => setHeight(e.target.value)}
+      />
+      <button onClick={calculateBMI}>Calculate</button>
+
+      {bmi && (
+        <div className="result">
+          <p><strong>BMI:</strong> {bmi}</p>
+          <p><strong>Category:</strong> {category}</p>
         </div>
-        <div className="input-group">
-          <label>Height (cm):</label>
-          <input
-            type="number"
-            value={height}
-            onChange={(e) => setHeight(e.target.value)}
-          />
-        </div>
-        <div className="buttons">
-          <button className="btn calculate" onClick={calculateBMI}>Calculate</button>
-          <button className="btn reset" onClick={reset}>Reset</button>
-        </div>
-        {bmi && (
-          <div className="result">
-            <h2>Your BMI: {bmi}</h2>
-            <p className={`category ${category.toLowerCase().replace(" ", "-")}`}>
-              Category: {category}
-            </p>
-          </div>
-        )}
-      </div>
-      <div>
-        <footer>@copyrigth from santhosh d</footer>
-      </div>
+      )}
     </div>
   );
-}
+};
 
-export default App;
+export default BMICalculator;
 ```
+### Home.jsx
+```
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-app.css
+const Home = () => {
+  return (
+    <div className="page">
+      <h1>Welcome to BMI Calculator</h1>
+      <Link to="/calculate">
+        <button>Go to Calculator</button>
+      </Link>
+    </div>
+  );
+};
+
+export default Home;
+```
+### App.css
 ```
 body {
+  background: linear-gradient(to bottom right, #dfe9f3, #ffffff);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #e0f7fa, #ffffff);
-  margin: 0;
-  padding: 0;
 }
 
-.container {
-  max-width: 420px;
-  margin: 80px auto;
-  padding: 35px 25px;
-  background-color: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+.page {
   text-align: center;
-  transition: transform 0.2s ease-in-out;
+  margin-top: 60px;
+  padding: 20px;
 }
 
-.container:hover {
-  transform: translateY(-5px);
-}
-
-h1 {
-  margin-bottom: 25px;
-  font-size: 28px;
-  color: #2c3e50;
-}
-
-.input-group {
-  margin-bottom: 20px;
-  text-align: left;
-}
-
-.input-group label {
-  display: block;
-  margin-bottom: 6px;
-  font-weight: 600;
-  color: #34495e;
-}
-
-.input-group input {
-  width: 100%;
+input {
   padding: 12px;
+  margin: 12px;
+  width: 220px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
   font-size: 16px;
-  border: 2px solid #dfe6e9;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-.input-group input:focus {
-  border-color: #00bcd4;
 }
 
 button {
-  padding: 12px 24px;
-  font-size: 16px;
-  margin: 12px 6px;
+  padding: 12px 25px;
+  background: #28a745;
   border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  background-color: #00bcd4;
   color: white;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
 button:hover {
-  background-color: #0097a7;
-  transform: scale(1.05);
-}
-
-button.reset {
-  background-color: #95a5a6;
-}
-
-button.reset:hover {
-  background-color: #7f8c8d;
+  background: #218838;
 }
 
 .result {
-  margin-top: 30px;
-  padding: 20px;
-  border-radius: 10px;
-  background-color: #ecf0f1;
-  border-left: 5px solid #00bcd4;
-  text-align: center;
-}
-
-.result h2 {
-  margin-bottom: 10px;
-  color: #2c3e50;
-}
-.message {
+  margin-top: 25px;
   font-size: 18px;
-  font-weight: bold;
-  color: #2c3e50;
+  color: #333;
 }
-
-footer {
-  margin-top: 40px;
-  font-size: 14px;
-  color: #7f8c8d;
-  font-weight: 500;
-}
-
-
 ```
 
 
 
 ## OUTPUT
+![Screenshot 2025-05-31 003846](https://github.com/user-attachments/assets/40399164-6db6-4111-b0ab-b261db7cda41)
 
-![web](https://github.com/user-attachments/assets/fb455d06-20f6-4763-9503-702a5f35489e)
 
 
 
